@@ -25,5 +25,10 @@ if ! command -v ansible-playbook >/dev/null 2>&1; then
   python -m pip install "ansible>=9,<11" "docker>=7,<8"
 fi
 
+extra_args=()
+if [ "$(id -u)" != "0" ]; then
+  extra_args+=(--ask-become-pass)
+fi
+
 ansible-galaxy collection install community.docker >/dev/null
-ansible-playbook playbook.yml "$@"
+ansible-playbook playbook.yml "${extra_args[@]}" "$@"
