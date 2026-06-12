@@ -64,3 +64,21 @@
             }
           }
       no_log: true
+
+    - name: Pull Orthanc image
+      community.docker.docker_image:
+        name: orthanc/orthanc:latest
+        source: pull
+
+    - name: Run Orthanc container
+      community.docker.docker_container:
+        name: orthanc
+        image: orthanc/orthanc:latest
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "{{ orthanc_http_port }}:8042"
+          - "{{ orthanc_dicom_port }}:4242"
+        volumes:
+          - "{{ orthanc_config_dir }}/orthanc.json:/etc/orthanc/orthanc.json:ro"
+          - "{{ orthanc_storage_dir }}:/var/lib/orthanc/db"
