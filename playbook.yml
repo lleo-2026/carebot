@@ -3,6 +3,13 @@
   hosts: local
   become: true
 
+  vars:
+    orthanc_config_dir: /opt/orthanc/config
+    orthanc_storage_dir: /opt/orthanc/storage
+    orthanc_http_port: 8042
+    orthanc_dicom_port: 4242
+    orthanc_aet: CAREBOT
+
   tasks:
     - name: Install Docker packages
       ansible.builtin.apt:
@@ -17,3 +24,34 @@
         name: docker
         state: started
         enabled: true
+
+    - name: Create Orthanc folders
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ orthanc_config_dir }}"
+        - "{{ orthanc_storage_dir }}"
+
+    - name: Write basic Orthanc config
+      ansible.builtin.copy:
+        dest: "{{ orthanc_config_dir }}/orthanc.json"
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          {
+            "Name": "Carebot Orthanc",
+            "StorageDirectory": "/var/lib/orthanc/db",
+            "DicomAet": "{{ orthanc_aet }}",
+            "DicomPort": {{ orthanc_dicom_port }},
+            "HttpPort": {{ orthanc_http_port }},
+            "RemoteAccessAllowed": true,
+            "AuthenticationEnabled": true,
+            "RegisteredUsers": {
+              "admin": "orthanc"
+            }
+          }
