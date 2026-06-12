@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 
 if [ -z "$ORTHANC_PASSWORD" ]; then
   echo "Please set ORTHANC_PASSWORD first. Example:"
-  echo "  export ORTHANC_PASSWORD='change-this-password'"
+  echo "  export ORTHANC_PASSWORD='change-me'"
   exit 1
 fi
 
@@ -20,8 +20,10 @@ fi
 
 . .venv/bin/activate
 
-python -m pip install --upgrade pip
-python -m pip install "ansible>=9,<11" "docker>=7,<8"
-ansible-galaxy collection install community.docker
+if ! command -v ansible-playbook >/dev/null 2>&1; then
+  python -m pip install --upgrade pip
+  python -m pip install "ansible>=9,<11" "docker>=7,<8"
+fi
 
+ansible-galaxy collection install community.docker >/dev/null
 ansible-playbook playbook.yml "$@"
