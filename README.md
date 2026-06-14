@@ -10,7 +10,7 @@ Files:
 
 ## Running task 3
 
-This was written for a local Debian/Ubuntu machine.
+This was written for a local Debian/Ubuntu or Fedora machine.
 
 Set an Orthanc password first:
 
