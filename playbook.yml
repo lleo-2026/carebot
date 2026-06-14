@@ -10,6 +10,7 @@
     orthanc_http_port: 8042
     orthanc_dicom_port: 4242
     orthanc_aet: CAREBOT
+    orthanc_image: orthancteam/orthanc:latest
     orthanc_username: "{{ lookup('env', 'ORTHANC_USERNAME') | default('admin', true) }}"
     orthanc_password: "{{ lookup('env', 'ORTHANC_PASSWORD') }}"
     docker_packages:
@@ -81,13 +82,13 @@
 
     - name: Pull Orthanc image
       community.docker.docker_image:
-        name: orthanc/orthanc:latest
+        name: "{{ orthanc_image }}"
         source: pull
 
     - name: Run Orthanc container
       community.docker.docker_container:
         name: orthanc
-        image: orthanc/orthanc:latest
+        image: "{{ orthanc_image }}"
         state: started
         restart_policy: unless-stopped
         published_ports:
