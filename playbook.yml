@@ -17,7 +17,6 @@
         - docker.io
         - python3-docker
       RedHat:
-        - moby-engine
         - python3-docker
 
   tasks:
@@ -37,6 +36,10 @@
       ansible.builtin.package:
         name: "{{ docker_packages[ansible_os_family] }}"
         state: present
+
+    - name: Check Docker command exists
+      ansible.builtin.command: docker --version
+      changed_when: false
 
     - name: Make sure Docker is running
       ansible.builtin.service:
